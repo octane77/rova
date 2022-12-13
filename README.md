@@ -1,3 +1,7 @@
+ROVA Coding assignment
+
+The assessment consists of an API to be used for opening a new “current account” of already existing customers.
+
 Requirements
 
 • The API will expose an endpoint which accepts the user information (customerID,
