@@ -1,0 +1,84 @@
+version: "3.3"
+services:
+  api_gateway:
+    build: ./apiGateway
+    environment:
+      - PORT=2321
+      - TRANSACTION_SERVICE_URL=http://transaction_service:2323
+      - ACCOUNT_SERVICE_URL=http://account_service:2322
+      - IDENTITY_SERVICE_URL=http://identity_service:2324
+    ports:
+      - "2321:2321"
+  account_service:
+    build: ./accountService
+    environment:
+      - PORT=2322
+      - DB_USER=accountServiceAdmin
+      - DB_PASSWORD=cXd3andzbjAjKjBJIyNPCg
+      - DB_NAME=accountService
+      - DB_HOST=account_service_db
+      - DB_PORT=5432
+      - TRANSACTION_SERVICE_URL=http://transaction_service:2323/transaction/v1
+    ports:
+      - "2322"
+  transaction_service:
+    build: ./transactionService
+    environment:
+      - PORT=2323
+      - DB_USER=transactionServiceAdmin
+      - DB_PASSWORD=cXd3andzbjAjKjBJIyMxCg
+      - DB_NAME=transactionService
+      - DB_HOST=transaction_service_db
+      - DB_PORT=5432
+    ports:
+      - "2323"
+  identity_service:
+    build: ./identityService
+    environment:
+      - PORT=2324
+      - DB_USER=identityServiceAdmin
+      - DB_PASSWORD=cXd3andzbjAjKjBJIyMxCg
+      - DB_NAME=identityService
+      - DB_HOST=identity_service_db
+      - DB_PORT=5432
+      - ACCOUNT_SERVICE_URL=http://account_service:2322/account/v1
+    ports:
+      - "2324"
+  account_service_db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=accountServiceAdmin
+      - POSTGRES_DB=accountService
+      - POSTGRES_PASSWORD=cXd3andzbjAjKjBJIyNPCg
+    volumes:
+      - account_service_db:/var/lib/postgresql/data
+    ports:
+      - "5432"
+  transaction_service_db:
+    image: postgres:14.1-alpine
+    environment:
+      - POSTGRES_USER=transactionServiceAdmin
+      - POSTGRES_DB=transactionService
+      - POSTGRES_PASSWORD=cXd3andzbjAjKjBJIyMxCg
+    volumes:
+      - transaction_service_db:/var/lib/postgresql/data
+    ports:
+      - "5432"
+  identity_service_db:
+      image: postgres:14.1-alpine
+      environment:
+        - POSTGRES_USER=identityServiceAdmin
+        - POSTGRES_DB=identityService
+        - POSTGRES_PASSWORD=cXd3andzbjAjKjBJIyMxCg
+      volumes:
+        - identity_service_db:/var/lib/postgresql/data
+      ports:
+        - "5432"
+
+volumes:
+  account_service_db:
+    driver: local
+  transaction_service_db:
+    driver: local
+  identity_service_db:
+    driver: local
